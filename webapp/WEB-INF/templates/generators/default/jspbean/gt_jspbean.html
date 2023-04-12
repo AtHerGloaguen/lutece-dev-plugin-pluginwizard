@@ -106,7 +106,8 @@ public class ${business_class.businessClass}JspBean extends Abstract${feature_na
 
     // Properties
     private static final String MESSAGE_CONFIRM_REMOVE_${business_class.businessClass?upper_case} = "${msg}.message.confirmRemove${business_class.businessClass?cap_first}";
-
+	private static final String MESSAGE_CONFIRM_MODIFY_${business_class.businessClass?upper_case} = "${msg}.message.confirmModify${business_class.businessClass?cap_first}";
+	
     // Validations
     private static final String VALIDATION_ATTRIBUTES_PREFIX = "${msg}.model.entity.${business_class.businessClass?lower_case}.attribute.";
 
@@ -120,6 +121,7 @@ public class ${business_class.businessClass}JspBean extends Abstract${feature_na
     private static final String ACTION_MODIFY_${business_class.businessClass?upper_case} = "modify${business_class.businessClass}";
     private static final String ACTION_REMOVE_${business_class.businessClass?upper_case} = "remove${business_class.businessClass}";
     private static final String ACTION_CONFIRM_REMOVE_${business_class.businessClass?upper_case} = "confirmRemove${business_class.businessClass}";
+    private static final String ACTION_CONFIRM_MODIFY_${business_class.businessClass?upper_case} = "confirmModify{business_class.businessClass}";
 
     // Infos
     private static final String INFO_${business_class.businessClass?upper_case}_CREATED = "${msg}.info.${business_class.businessClass?lower_case}.created";
@@ -367,6 +369,29 @@ public class ${business_class.businessClass}JspBean extends Abstract${feature_na
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_${business_class.businessClass?upper_case}, TEMPLATE_MODIFY_${business_class.businessClass?upper_case}, model );
     }
 
+
+/**
+     * Manages the removal form of a ${business_class.businessClass?lower_case} whose identifier is in the http
+     * request
+     *
+     * @param request The Http request
+     * @return the html code to confirm
+     */
+    @Action( ACTION_CONFIRM_MODIFY_${business_class.businessClass?upper_case} )
+    public String getConfirmModify${business_class.businessClass}( HttpServletRequest request )
+    {
+     	populate( _${business_class.businessClass?lower_case}, request, getLocale( ) );
+        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_${business_class.businessClass?upper_case} ) );
+        UrlItem url = new UrlItem( getActionUrl( ACTION_MODIFY_${business_class.businessClass?upper_case} ) );
+        url.addParameter( PARAMETER_ID_${business_class.businessClass?upper_case}, nId );
+ 		url.addParameter(SecurityTokenService.MARK_TOKEN, request.getParameter( SecurityTokenService.MARK_TOKEN) );
+        String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_MODIFY_${business_class.businessClass?upper_case}, url.getUrl(  ), AdminMessage.TYPE_CONFIRMATION );
+
+        return redirect( request, strMessageUrl );
+    }
+
+
+
     /**
      * Process the change form of a ${business_class.businessClass?lower_case}
      *
@@ -377,7 +402,7 @@ public class ${business_class.businessClass}JspBean extends Abstract${feature_na
     @Action( ACTION_MODIFY_${business_class.businessClass?upper_case} )
     public String doModify${business_class.businessClass}( HttpServletRequest request ) throws AccessDeniedException
     {   
-        populate( _${business_class.businessClass?lower_case}, request, getLocale( ) );
+      
 		
 		<#if hasFile?? && hasFile>
 		IFileStoreServiceProvider fileStoreService = ${business_class.businessClass}Home.getFileStoreServiceProvider( );
